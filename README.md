@@ -1,17 +1,21 @@
 # Docker Deploy Webhook
 
-A web service for automated deployment of releases from Docker Hub to a Docker Swarm - triggered by a Docker Hub webhook (which can in turn be triggred by pushing to GitHub).
+A web service for automated deployment of releases from Docker Hub to a Docker Swarm, triggered by a Docker Hub webhook (which can in turn be triggred by pushing to GitHub).
+
+<img width="1526" alt="screen shot 2018-02-02 at 18 55 18" src="https://user-images.githubusercontent.com/595695/35750202-1efdaa5a-084c-11e8-8c7d-2b4fc0deb3c3.png">
 
 Flow for automated deployment:
 
 * Configure Docker Hub to build an image when a GitHub repository is updated.
-* Configure Docker Hub to call this service via webhook (e.g. https://example.com:8080/webhook/123456ABCDEF) when an new image is available.
+* Configure Docker Hub to call this service via webhook when a new image is available.
 * Configure and deploy this service to your Docker Swarm cluster.
 * When a new image is built, it will update the Docker Service in the Swarm. 
 
 This webhook is intended for use with private Docker Hub repositories and self hosted Docker Swarm instances.
 
 To get started, clone this repository, add an image of it to your Docker Hub account, configure `config.json` and deploy it to your Docker Swarm as a service (see steps below).
+
+[Read more about this service in this blog post.](https://medium.com/@iaincollins/docker-swarm-automated-deployment-cb477767dfcf)
 
 ## Configuration
 
@@ -66,6 +70,18 @@ You use the same callback URL for all services, when `docker-deploy-webhook` rec
     your-org-name/decoders-deploy-webhook:latest
 
 Note: This example exposes the service directly on port 8080.
+
+## Configure Docker Hub to use Webhook
+
+Use the "**Create automated build**" option in Docker Hub to automatically build an image in Docker Hub when changes are pushed to a GitHub repository, then add a webhook to the Docker Hub image repository.
+
+The URL to specify for the webhook in Docker Hub will be `${your-server}/webhook/${your-token}`.
+
+e.g. https://example.com:8080/webhook/123456ABCDEF
+
+You can configure multiple webhooks for a Docker Hub repository (e.g. one webhook on your production cluster, one on development, etc).
+
+While all webhooks will receive the callback, the specific image that has just been built (e.g. `:latest`, `:edge`, etc.) will only be deployed to an environment if the webhook service running on it has it whitelisted in the `config.json` block for that environment.
 
 ## Testing
 
