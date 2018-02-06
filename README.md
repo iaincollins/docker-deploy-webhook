@@ -77,7 +77,7 @@ Use the "**Create automated build**" option in Docker Hub to automatically build
 
 The URL to specify for the webhook in Docker Hub will be `${your-server}/webhook/${your-token}`.
 
-e.g. https://example.com:8080/webhook/123456ABCDEF
+e.g. https://example.com/webhook/123456ABCDEF
 
 You can configure multiple webhooks for a Docker Hub repository (e.g. one webhook on your production cluster, one on development, etc).
 
