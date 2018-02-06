@@ -91,4 +91,4 @@ To test locally with the example payload:
 
 To test in production with the example payload:
 
-    curl -v -H "Content-Type: application/json" --data @payload.json https://example.com:8080/webhook/123456ABCDEF
+    curl -v -H "Content-Type: application/json" --data @payload.json https://example.com/webhook/123456ABCDEF
