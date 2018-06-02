@@ -1,7 +1,10 @@
 {
   "production": {
     "my-org/my-repo:latest": {
-      "service": "my-docker-service"
+      "service": "my-docker-service",
+      "options": {
+        "pullButDontDeploy": false
+      }
     },
     "my-org/my-other-repo:latest": {
       "service": "my-other-docker-service"
@@ -14,6 +17,5 @@
     "my-org/my-other-repo:development": {
       "service": "my-other-docker-service"
     }
-
   }
 }

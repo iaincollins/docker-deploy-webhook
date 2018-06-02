@@ -31,7 +31,26 @@ app.post('/webhook/:token', (req, res) => {
 
   const image = services[imageName]
   const service = image.service
+
+  if (image.options.pullButDontDeploy) {
+    docker.pull(imageName)
+      .then((msg) => {
+        ;
+      })
+      .catch((err) => {
+        logger.error(err)
+      })
+
+    return
+  }
+
   docker.deploy(imageName, service)
+    .then((msg) => {
+      ;
+    })
+    .catch((err) => {
+      logger.error(err)
+    })
 })
 
 app.all('*', (req, res) => {
