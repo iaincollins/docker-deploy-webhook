@@ -2,28 +2,21 @@
  * A service for automated deployment from Docker Hub to Docker Swarm
  * https://docs.docker.com/docker-hub/webhooks/
  */
-process.env.PORT = process.env.PORT || 3000
-
 const express = require('express')
 const bodyParser = require('body-parser')
-const child_process = require('child_process')
 const app = express()
-const services = require(`./config.json`)[process.env.CONFIG || 'production']
+const config = require('./lib/config')
+const child_process = require('child_process')
 const logger = require('./lib/logger')('DOCKER-DEPLOY')
+const services = require(`./config/config.json`)[config.whichConfig]
 
-if (!process.env.TOKEN || !process.env.USERNAME || !process.env.PASSWORD)
-  return logger.error('Error: You must set a TOKEN, USERNAME and PASSWORD as environment variables.')
-
-const dockerCommand = process.env.DOCKER || '/usr/bin/docker'
-const token = process.env.TOKEN || ''
-const username = process.env.USERNAME || ''
-const password = process.env.PASSWORD || ''
+const { dockerCommand, port, token, username, password } = config
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.post('/webhook/:token', (req, res) => {
-  if (!req.params.token || req.params.token != token) {
+  if (!req.params.token || req.params.token !== token) {
     logger.log('Webhook called with invalid or missing token.')
     return res.status(401).send('Access Denied: Token Invalid\n').end()
   }
@@ -47,20 +40,20 @@ app.post('/webhook/:token', (req, res) => {
       logger.log(`Deploying ${image} to ${service}…`)
       child_process.exec(`${dockerCommand} service update ${service} --force --with-registry-auth --image=${image}`,
         (error, stdout, stderr) => {
-        if (error) {
-          logger.error(`Failed to deploy ${image} to ${service}!`)
-          return logger.error(error)
-        }
-        logger.log(`Deployed ${image} to ${service} successfully and restarted the service.`)
+          if (error) {
+            logger.error(`Failed to deploy ${image} to ${service}!`)
+            return logger.error(error)
+          }
+          logger.log(`Deployed ${image} to ${service} successfully and restarted the service.`)
+        })
     })
-  })
 })
 
 app.all('*', (req, res) => {
   res.send('')
 })
 
-app.listen(process.env.PORT, err => {
+app.listen(port, err => {
   if (err) throw err
-  logger.log(`Listening for webhooks on http://localhost:${process.env.PORT}/webhook/${token}`)
+  logger.log(`Listening for webhooks on http://localhost:${port}/webhook/${token}`)
 })
