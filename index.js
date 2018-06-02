@@ -10,7 +10,7 @@ const child_process = require('child_process')
 const logger = require('./lib/logger')('DOCKER-DEPLOY')
 const services = require(`./config/config.json`)[config.whichConfig]
 
-const { dockerCommand, port, token, username, password } = config
+const { dockerCommand, port, token, username, password, withRegistryAuth } = config
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -38,7 +38,9 @@ app.post('/webhook/:token', (req, res) => {
 
       // Deploy the image and force a restart of the associated service
       logger.log(`Deploying ${image} to ${service}…`)
-      child_process.exec(`${dockerCommand} service update ${service} --force --with-registry-auth --image=${image}`,
+
+      const registryAuth = (withRegistryAuth) ? '--with-registry-auth' : ''
+      child_process.exec(`${dockerCommand} service update ${service} --force ${registryAuth} --image=${image}`,
         (error, stdout, stderr) => {
           if (error) {
             logger.error(`Failed to deploy ${image} to ${service}!`)
