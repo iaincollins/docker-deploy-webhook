@@ -9,7 +9,7 @@ Flow for automated deployment:
 * Configure Docker Hub to build an image when a GitHub repository is updated.
 * Configure Docker Hub to call this service via webhook when a new image is available.
 * Configure and deploy this service to your Docker Swarm cluster.
-* When a new image is built, it will update the Docker Service in the Swarm. 
+* When a new image is built, it will update the Docker Service in the Swarm.
 
 This webhook is intended for use with private Docker Hub repositories and self hosted Docker Swarm instances.
 
@@ -52,6 +52,10 @@ Inside each environment config is the name of an image and tag to listen for, an
 You can use the `CONFIG` environment variable to tell `docker-deploy-webhook` which section to use when it loads - this is useful if you have multiple Docker Swarm instances - e.g. production, development.
 
 You use the same callback URL for all services, when `docker-deploy-webhook` receives an update for an image and tag is it is configured for it will push that release to the service associated with it in `config.json`.
+
+### Notifications Configuration (Optional)
+
+See the `README.md` file in `/config`
 
 ## Deploy to Docker Swarm
 
