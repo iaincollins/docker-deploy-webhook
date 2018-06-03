@@ -41,9 +41,5 @@ RUN npm install
 # copy everything else
 COPY . .
 
-# put config.json in its own folder so it can be easily exposed in a bind mount
-RUN mkdir -p ${CONFIG_PATH}
-COPY config/config.json ${CONFIG_PATH}
-
 EXPOSE ${PORT}
 CMD [ "npm", "start" ]
