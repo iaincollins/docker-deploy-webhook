@@ -1,18 +1,24 @@
-const logger = require('../../lib/logger')('MAILGUN')
-
-/* configure emailer */
 const mg = require('nodemailer-mailgun-transport')
 const nodemailer = require('nodemailer')
 
-const { auth, fromAddress: from } = require('./config')
-if (typeof auth !== 'object' || !auth.api_key || !auth.domain || !from) {
-  logger.error('Invalid mailgun config. Exiting...')
-  process.exit(1)
-}
+const logger = require('../../lib/logger')('MAILGUN')
 
-const smtpTransport = nodemailer.createTransport(mg({ auth }))
+const {
+  auth,
+  fromAddress: from,
+  enabled
+} = require('./config')
+
+const smtpTransport = (enabled)
+  ? nodemailer.createTransport(mg({ auth }))
+  : null
 
 function sendEmail(notification, emailAddresses) {
+  if (!enabled) {
+    logger.warn('Mailgun is disabled. Not sending notifications')
+    return
+  }
+
   const {
     action,
     msg = '',
