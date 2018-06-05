@@ -17,11 +17,9 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.post('/webhook/:token', (req, res) => {
-  if (req.params.token !== token) {
-    logger.log('Webhook called with invalid or missing token.')
-    return res.status(401).send('Access Denied: Token Invalid\n').end()
+  if (!checkToken(req.params.token, res)) {
+    return
   }
-
   // Send response back right away if token was valid
   res.send('OK')
 
@@ -59,11 +57,37 @@ app.post('/webhook/:token', (req, res) => {
     })
 })
 
+// default route
 app.all('*', (req, res) => {
   res.send('')
 })
 
-app.listen(port, err => {
-  if (err) throw err
-  logger.log(`Listening for webhooks on http://localhost:${port}/webhook/${token}`)
-})
+// start webserver
+if (config.sslCert && config.sslKey) {
+  // start server with HTTPS only if SSL key & cert have been provided
+  const https = require('https')
+  const options = {
+    key: config.sslKey,
+    cert: config.sslCert
+  }
+  https.createServer(options, app).listen(port, serverStartCallback)
+} else {
+  // start HTTP server
+  app.listen(port, serverStartCallback)
+}
+
+function serverStartCallback(err) {
+  if (err) throw new Error(`Couldn't start server: ${err}`)
+
+  const protocol = (config.sslCert && config.sslKey) ? 'https' : 'http'
+  logger.log(`Listening for webhooks on ${protocol}://localhost:${port}/webhook/${token}`)
+}
+
+function checkToken(tokenSent, res) {
+  if (tokenSent !== token) {
+    logger.log('Endpoint called with invalid or missing token.')
+    res.status(401).send('Access Denied: Token Invalid\n').end()
+    return false
+  }
+  return true
+}

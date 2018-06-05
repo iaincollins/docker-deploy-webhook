@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "postinstall": "npm-recursive-install --skip-root --rootDir=plugins"
+    "postinstall": "npm-recursive-install --skip-root"
   },
   "author": "",
   "license": "ISC",
