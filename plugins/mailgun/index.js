@@ -46,7 +46,7 @@ function sendEmail(notification, emailAddresses) {
   const to = emailAddresses.toString()
   smtpTransport.sendMail({ to, from, subject, html }, (error, response) => {
     if (error) {
-      logger.error(`mailgun error: ${JSON.stringify(error)}`)
+      logger.error(`mailgun error: ${error}`)
     }
   })
 }
