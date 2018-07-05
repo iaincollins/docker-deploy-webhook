@@ -1,0 +1,96 @@
+{
+  "production": {
+    "my-org/my-repo:tag": {
+      "nickName": "my-repo:tag",
+      "service": "my-docker-service",
+      "options": {
+        "pullButDontDeploy": false,
+        "notify": {
+          "all": {
+            "notify": true,
+            "methods": {
+              "email": [
+                "admin@example.com",
+                "admin2@example.com"
+              ],
+              "webhook": [
+                "https://www.example.com/webhook",
+                "https://www.example.com/webhook2"
+              ]
+            }
+          },
+          "allSuccess": {
+            "notify": false,
+            "methods": {}
+          },
+          "allFailure": {
+            "notify": false,
+            "methods": {}
+          },
+          "deploy": {
+            "success": {
+              "notify": false,
+              "methods": {}
+            },
+            "failure": {
+              "notify": false,
+              "methods": {}
+            }
+          },
+          "pull": {
+            "success": {
+              "notify": false,
+              "methods": {}
+            },
+            "failure": {
+              "notify": false,
+              "methods": {}
+            }
+          }
+        }
+      }
+    },
+    "my-org/my-other-repo:tag": {
+      "nickName": "my-other-repo",
+      "service": "my-other-docker-service",
+      "options": {
+        "pullButDontDeploy": true,
+        "notify": {
+          "all": {
+            "notify": true,
+            "methods": {
+              "email": [
+                "admin@example.com"
+              ],
+              "webhook": [
+                "https://www.example.com/webhook"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "development": {
+    "my-org/my-repo:development": {
+      "nickName": "arbitrary text, used for notifications",
+      "service": "my-docker-service",
+      "options": {}
+    },
+    "my-org/my-other-repo:development": {
+      "nickName": "myNickName",
+      "service": "my-other-docker-service",
+      "options": {}
+    },
+    "defaultNotificationOptions": {
+      "all": {
+        "notify": true,
+        "methods": {
+          "email": [
+            "admin@example.com"
+          ]
+        }
+      }
+    }
+  }
+}

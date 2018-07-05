@@ -1,0 +1,73 @@
+version: "3.6"
+services:
+  ddw:
+    image: yourorg/docker-deploy-webhook:tag
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+
+       # target path must match CONFIG_DIR 
+      - 'ddw-config:/usr/src/app/config'
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 100M
+      restart_policy:
+        condition: any
+      placement:
+        constraints: [node.role == manager]
+    environment:
+      - TOKEN_FILE=/run/secrets/ddw_token
+      - USERNAME_FILE=/run/secrets/ddw_username
+      - PASSWORD_FILE=/run/secrets/ddw_password
+
+      - SSL_CERT_FILE=/run/secrets/ddw.crt
+      - SSL_KEY_FILE=/run/secrets/ddw.key
+
+      # https://github.com/settings/tokens
+      - GITHUB_TOKEN=abcdef01234567890abcdef01234567890abcdef
+      - GITHUB_URL=github.com/yourorg/docker-deploy-webhook-config.git
+
+      - MAILGUN_KEY_FILE=/run/secrets/mailgun_key
+      - MAILGUN_DOMAIN=example.com
+      - MAILGUN_FROM_ADDRESS=Docker Deploy <docker-deploy@example.com>
+
+      - CONFIG_DIR=/usr/src/app/config
+      - CONFIG_FILE=config.json
+      - ENABLE_FRONTEND=false
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    networks:
+      - ddw
+    secrets:
+      - ddw_token
+      - ddw_username
+      - ddw_password
+      - ddw.crt
+      - ddw.key
+      - mailgun_key
+      
+networks:
+  ddw:
+
+volumes:
+  #  Modify driver for your cloud provider
+  ddw-config:
+    driver: cloudstor:azure
+
+secrets:
+  ddw_token:
+    external: true
+  ddw_username:
+    external: true
+  ddw_password:
+    external: true
+  ddw.crt:
+    external: true
+  ddw.key:
+    external: true
+  mailgun_key:
+    external: true
