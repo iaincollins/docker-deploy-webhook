@@ -62,7 +62,7 @@ You use the same callback URL for all services, when `docker-deploy-webhook` rec
     --constraint "node.role==manager" \
     --publish=8080:8080 \
     --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
-    -e CONFIG="8080" \
+    -e PORT="8080" \
     -e CONFIG="production" \
     -e TOKEN="123456ABCDEF" \
     -e USERNAME="docker-hub-username" \
