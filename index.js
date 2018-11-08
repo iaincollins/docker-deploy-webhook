@@ -18,6 +18,7 @@ const dockerCommand = process.env.DOCKER || '/usr/bin/docker'
 const token = process.env.TOKEN || ''
 const username = process.env.USERNAME || ''
 const password = process.env.PASSWORD || ''
+const registry = process.env.REGISTRY || ''
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -39,7 +40,7 @@ app.post('/webhook/:token', (req, res) => {
   const service = services[image].service
   
   // Make sure we are logged in to be able to pull the image
-  child_process.exec(`${dockerCommand} login -u "${username}" -p "${password}"`,
+  child_process.exec(`${dockerCommand} login -u "${username}" -p "${password}" ${registry}`,
     (error, stdout, stderr) => {
       if (error) return console.error(error)
 
