@@ -10,7 +10,8 @@ ENV PORT=3000
 EXPOSE ${PORT}
 
 #  Which configuration in the config.json file to load
-ENV CONFIG="production"
+ARG CONFIG="production"
+ENV CONFIG=${CONFIG}
 
 # Location of config.json
 ENV CONFIG_DIR=/usr/src/app/config/

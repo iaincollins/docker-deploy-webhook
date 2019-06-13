@@ -13,7 +13,7 @@ Flow for automated deployment:
 
 This webhook is intended for use with private Docker Hub repositories and self hosted Docker Swarm instances.
 
-To get started, clone this repository, add an image of it to your Docker Hub account, configure `config.json` and deploy it to your Docker Swarm as a service (see steps below).
+To get started, clone this repository, add an image of it to your Docker Hub account, configure config.json and deploy it to your Docker Swarm as a service (see steps below).
 
 [Read more about this service in this blog post.](https://medium.com/@iaincollins/docker-swarm-automated-deployment-cb477767dfcf)
 
@@ -26,6 +26,14 @@ Supported environment variables:
     TOKEN="123-456-ABC-DEF" // A token used to restrict access to the webhook
     USERNAME="docker-hub-username" // A Docker Hub account username
     PASSWORD="docker-hub-password" // A Docker Hub account password
+
+**note:** the value for `CONFIG` environment variable can be passed in at image build time:
+
+```
+  docker build \
+   --build-arg CONFIG=part-of-config-dot-json-file-to-load \
+   -t docker-hub-username/docker-deploy-webhook .
+```
 
 The `config.json` file defines each environment:
 
